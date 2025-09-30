@@ -1,0 +1,106 @@
+:root {
+  /* brand */
+  --brand: #2563eb;
+  --brand-600: #2563eb;
+  --brand-700: #1d4ed8;
+
+  /* text */
+  --text-1: #0f172a;
+  --text-2: #475569;
+  --text-3: #94a3b8;
+
+  /* surfaces */
+  --bg-0: #ffffff;
+  --bg-1: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+
+  /* states */
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger:  #dc2626;
+  --info:    #0284c7;
+
+  /* radius / spacing / shadow */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+
+  --shadow-1: 0 1px 3px rgba(0,0,0,.06);
+  --shadow-2: 0 4px 12px rgba(0,0,0,.08);
+}
+
+:root[data-theme="dark"] {
+  --text-1: #e5e7eb;
+  --text-2: #cbd5e1;
+  --text-3: #94a3b8;
+  --bg-0: #0b1020;
+  --bg-1: #0f172a;
+  --card: #111827;
+  --border: #1f2937;
+  --shadow-1: 0 1px 3px rgba(0,0,0,.4);
+  --shadow-2: 0 4px 12px rgba(0,0,0,.45);
+}
+
+/* Base resets */
+html, body, #app { height: 100%; background: var(--bg-1); color: var(--text-1); }
+a { color: var(--brand); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* 响应式排版与容器留白（基础建议值） */
+body { font-size: clamp(14px, 1.6vw, 16px); }
+.container { width: min(100%, 1200px); margin: 0 auto; padding: 0 16px; }
+
+/* Reusable */
+.icon-btn {
+  width: 40px; height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  color: var(--text-2);
+  box-shadow: var(--shadow-1);
+  transition: all .2s ease;
+}
+.icon-btn:hover { color: var(--brand); border-color: var(--brand-600); }
+.icon-btn:active { transform: scale(.98); }
+
+.chat-bubble {
+  max-width: 860px;
+  padding: var(--space-4);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  line-height: 1.65;
+  color: var(--text-1);
+  word-break: break-word;
+}
+.chat-bubble.user { background: #eef2ff; border-color: #c7d2fe; }
+.chat-bubble.assistant { background: var(--card); }
+
+.markdown {
+  --code-bg: #0b1020; --code-border: #1f2937;
+}
+.markdown h1, .markdown h2 { margin: 1.2em 0 .6em; }
+.markdown p, .markdown li { color: var(--text-1); font-size: 14px; }
+.markdown table { width:100%; border-collapse: collapse; font-size: 13px; }
+.markdown table th, .markdown table td { border:1px solid var(--border); padding:10px 12px; }
+.markdown pre code {
+  display:block; padding:14px 16px; border-radius: var(--radius-md);
+  background: var(--bg-1); border:1px solid var(--border); overflow:auto;
+}
+/* focus */
+:focus-visible { outline: 2px solid color-mix(in oklab, var(--brand) 50%, transparent); outline-offset: 2px; }
+
+/* 小屏优化的滚动视口使用及时更新高度单位 */
+@supports (height: 100dvh) {
+  html, body { height: 100dvh; }
+}

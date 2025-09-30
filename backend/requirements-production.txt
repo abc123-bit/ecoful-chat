@@ -1,0 +1,42 @@
+# 核心FastAPI依赖
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+python-multipart>=0.0.6
+python-dotenv>=1.0.0
+pydantic[email]>=2.0.0
+pydantic-settings>=2.0.0
+
+# 数据库依赖
+sqlalchemy>=2.0.0
+asyncpg>=0.28.0
+alembic>=1.12.0
+
+# 存储和缓存
+minio>=7.1.0
+redis>=5.0.0
+
+# 文件处理（必需）
+pypdf2>=3.0.0
+python-docx>=1.0.0
+openpyxl>=3.1.0
+python-pptx>=0.6.0
+beautifulsoup4>=4.12.0
+
+# 文本处理
+markdown>=3.5.0
+
+# HTTP和工具
+httpx>=0.25.0
+tenacity>=8.2.0
+loguru>=0.7.0
+aiofiles>=23.0.0
+
+# 安全相关
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.0
+
+# 向量数据库（如果安装困难可以先跳过）
+# chromadb>=0.4.0
+
+# AI相关（可选，用于本地向量化）
+# sentence-transformers>=2.2.0

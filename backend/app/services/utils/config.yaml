@@ -1,0 +1,21 @@
+# 日志配置
+logging:
+  level: "INFO"
+  format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}"
+  file: "./logs/system.log"
+
+# 解析器配置
+parser:
+  pdf_parser: "pdfplumber"
+  word_parser: "python-docx"
+  html_parser: "beautifulsoup4"
+  enable_ocr: true
+  ocr_lang: "chi_sim+eng"
+  mineru_parser: "enabled"
+
+# MinerU配置
+mineru:
+  api_token: "eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJqdGkiOiI5MDMwODAyMSIsInJvbCI6IlJPTEVfUkVHSVNURVIiLCJpc3MiOiJPcGVuWExhYiIsImlhdCI6MTc1OTIyMDU4OCwiY2xpZW50SWQiOiJsa3pkeDU3bnZ5MjJqa3BxOXgydyIsInBob25lIjoiMTgwNDcwNTQ4NzMiLCJvcGVuSWQiOm51bGwsInV1aWQiOiJiYmRiZmZjMC1lYjc0LTQ1ODgtODFlNC0wYjBkODgwNWNkNTMiLCJlbWFpbCI6IiIsImV4cCI6MTc2MDQzMDE4OH0.R6Ho0jU50zIH8LHM0Y75haWUetyWqySA3zZfQqzEnrj4zVTf4Z_tWTYtRktCi7i7fZ4tO9qmTiNR5py8KksTXg"
+  enable_formula: true
+  enable_table: true
+  language: "ch"
