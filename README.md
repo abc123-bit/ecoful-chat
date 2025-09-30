@@ -1,424 +1,151 @@
-# Vue Dify Chat
 
-基于 Vue 3 的类 OpenAI 聊天界面，集成 Dify 对话工作流 API，提供完整的 AI 对话体验。
-
-> **版本：v1.1.0** - 已修复 CSS 语法错误，优化部署配置
-
-## ✨ 功能特性
-
-### 🎨 用户界面
-- **类 ChatGPT 布局**：左侧边栏 + 右侧主聊天区
-- **响应式设计**：完美适配桌面端和移动端
-- **优雅的 UI**：基于 Ant Design Vue 组件库
-- **暗色侧边栏**：现代化的视觉设计
-
-### 💬 对话功能
-- **实时流式响应**：基于 Server-Sent Events 的逐字输出
-- **停止生成**：可随时中断AI回答的生成过程
-- **Markdown 渲染**：支持代码高亮、表格、链接等
-- **思考过程显示**：特殊处理 `<think></think>` 标签，用灰色小字体显示AI思考过程
-- **消息操作**：一键复制、点赞、点踩功能
-- **响应统计**：显示消息数量和状态信息
-
-### 📱 交互体验
-- **新建对话**：快速创建新的聊天会话
-- **历史管理**：自动加载和浏览Dify服务器的历史对话记录
-- **会话恢复**：点击历史会话可完整恢复对话内容并继续提问
-- **错误处理**：友好的错误提示和重试机制
-- **加载状态**：清晰的加载动画和状态指示
-
-### 🔧 技术特性
-- **Vue 3 Composition API**：现代化的 Vue 开发方式
-- **Pinia 状态管理**：轻量级的状态管理方案
-- **TypeScript 支持**：更好的类型安全
-- **Vite 构建**：快速的开发和构建体验
-
-## 🚀 快速开始
-
-### 环境要求
-- Node.js >= 16.0.0
-- npm >= 7.0.0 或 yarn >= 1.22.0
-
-### 安装依赖
-```bash
-# 下载项目
-cd ecoful-chat
-
-# 安装依赖
-npm install
-# 或
-yarn install
-```
-
-### 环境配置
-1. 复制环境变量配置文件：
-```bash
-cp .env.example .env
-```
-
-2. 配置 Dify API 参数：
-```env
-# Dify API 配置
-VITE_DIFY_API_URL=your Dify host address (https://api.dify.ai/v1)
-VITE_DIFY_API_KEY=your_dify_api_key_here
-```
-
-### 获取 Dify API 密钥
-1. 登录 [Dify 控制台](https://dify.ai)
-2. 创建或选择一个ChatFlow应用
-3. 在应用设置中获取 API Key
-
-### 启动开发服务器
-```bash
-npm run dev
-# 或
-yarn dev
-```
-
-访问 http://localhost:3000 即可使用应用。
-
-### 构建生产版本
-```bash
-npm run build
-# 或
-yarn build
-```
-
-## 📁 项目结构
-
-```
-ecoful-chat/
-├── public/                 # 静态资源
-├── src/
-│   ├── assets/            # 样式和资源文件
-│   │   └── style.css      # 全局样式
-│   ├── components/        # Vue 组件
-│   │   ├── Sidebar.vue    # 侧边栏组件
-│   │   ├── MainChat.vue   # 主聊天区组件
-│   │   └── Message.vue    # 消息组件
-│   ├── services/          # API 服务
-│   │   └── dify.js        # Dify API 集成
-│   ├── stores/            # Pinia 状态管理
-│   │   └── chat.js        # 聊天状态管理
-│   ├── utils/             # 工具函数
-│   │   └── helpers.js     # 辅助函数
-│   ├── views/             # 页面组件
-│   │   └── Chat.vue       # 聊天页面
-│   ├── App.vue            # 根组件
-│   └── main.js            # 入口文件
-├── .env.example           # 环境变量示例
-├── .gitignore            # Git 忽略文件
-├── index.html            # HTML 模板
-├── package.json          # 项目配置
-├── vite.config.js        # Vite 配置
-└── README.md             # 项目文档
-```
-
-## 🔌 Dify API 集成
-
-### 支持的 API 功能
-- **对话消息发送**：`/chat-messages` 接口
-- **流式响应**：Server-Sent Events 实时流
-- **历史对话**：`/conversations` 管理
-- **消息反馈**：点赞/点踩功能
-- **对话删除**：清理历史记录
-
-### API 配置说明
-```javascript
-// src/services/dify.js
-const difyService = {
-  baseURL: 'https://api.dify.ai/v1',
-  apiKey: 'your_api_key',
-}
-```
-
-### 流式响应处理
-应用使用 Fetch API 和 ReadableStream 处理 Dify 的流式响应：
-
-```javascript
-// 处理流式数据
-const reader = response.body.getReader()
-const decoder = new TextDecoder()
-
-while (true) {
-  const { done, value } = await reader.read()
-  if (done) break
-  
-  // 解析 SSE 数据
-  const chunk = decoder.decode(value)
-  // 处理增量消息...
-}
-```
-
-## 🧠 AI思考过程显示
-
-### 功能说明
-当AI的回复包含 `<think></think>` 标签时，系统会自动将思考过程用特殊样式显示：
-
-- **视觉区分**：灰色背景和较小字体
-- **思考标识**：自动添加 💭 图标和"思考过程"标签
-- **独立区域**：与正式回答内容明确分离
-
-### 示例效果
-```
-💭 思考过程：
-用户问了一个关于编程的问题，我需要提供清晰的解释...
-
-正式回答：
-JavaScript 是一种动态编程语言...
-```
-
-### 技术实现
-- 使用正则表达式预处理内容
-- 自动转换为带样式的HTML元素
-- 保持Markdown渲染的完整性
-
-## 🛑 停止生成功能
-
-### 功能说明
-在AI回答生成过程中，用户可以随时停止回答的生成：
-
-- **红色停止按钮**：在AI生成时，发送按钮变为红色停止按钮
-- **即时中断**：点击停止按钮立即中断API请求和流式响应
-- **友好提示**：停止后显示"已停止生成"的提示信息
-- **状态恢复**：停止后自动恢复到可发送新消息的状态
-
-### 使用场景
-- AI回答太长，想要提前结束
-- AI回答方向不对，需要重新提问
-- 网络状况不佳，响应太慢
-- 误触发送，想要撤回
-
-### 技术实现
-- 使用 `AbortController` 控制HTTP请求
-- 在流式响应循环中检查中止信号
-- 优雅处理中断异常，避免错误提示
-- 支持演示模式和真实API模式
-
-## 📚 历史会话管理
-
-### 功能说明
-系统会自动从Dify服务器加载用户的历史会话，实现跨设备、跨会话的对话连续性：
-
-- **自动加载**：页面启动时自动获取历史会话列表
-- **分类显示**：侧边栏分别显示"当前会话"和"历史会话"
-- **完整恢复**：点击历史会话可完整加载所有消息记录
-- **继续对话**：在历史会话基础上可以继续提问
-- **实时同步**：支持手动刷新获取最新历史记录
-
-### 界面布局
-```
-侧边栏结构:
-├── 新的对话 (按钮)
-├── 刷新历史 (按钮)
-└── 会话列表 (按时间倒序)
-    ├── 今天的讨论 (刚刚) [删除]
-    ├── JavaScript 问题 (2小时前) [删除]  
-    ├── 关于Vue的讨论 (昨天) [📖历史]
-    ├── API设计方案 (3天前) [📖历史]
-    └── 算法优化思路 (1周前) [📖历史]
-```
-
-### 会话标识
-- **当前会话**：显示删除按钮，可以删除
-- **历史会话**：显示历史图标(📖)，不能删除但可以加载
-
-### 使用方式
-1. **查看所有会话**：侧边栏按时间顺序显示所有会话（当前+历史）
-2. **加载历史会话**：点击带历史图标的会话，自动加载完整对话内容
-3. **继续对话**：在任何会话中都可以继续发送新消息
-4. **刷新历史**：点击"刷新历史"按钮获取最新的历史会话
-5. **避免重复**：已加载的历史会话不会在列表中重复显示
-
-### 技术实现
-- 使用Dify的 `/conversations` API获取会话列表
-- 使用Dify的 `/messages` API获取具体会话的消息记录
-- 智能转换Dify消息格式为本地显示格式
-- 保持会话ID映射，支持在历史会话中继续对话
-
-## 🎯 核心功能详解
-
-### 对话管理
-- **会话创建**：自动生成唯一 ID 的新对话
-- **智能清理**：自动清理没有消息的空会话，避免重复
-- **历史同步**：自动从Dify服务器加载历史会话列表
-- **会话恢复**：完整加载历史对话的消息记录，支持继续对话
-- **双重列表**：区分显示当前会话和历史会话
-- **标题生成**：基于首条用户消息自动生成标题
-- **状态持久化**：使用 Pinia 管理对话状态
-- **消息历史**：完整的消息记录和时间戳
-
-### 消息渲染
-- **Markdown 支持**：使用 markdown-it 解析
-- **代码高亮**：集成 highlight.js 语法高亮
-- **思考过程**：自动识别和美化显示 `<think></think>` 标签内容
-- **安全渲染**：防止 XSS 攻击的内容过滤
-- **响应式布局**：移动端友好的消息显示
-
-### 用户交互
-- **实时输入**：支持多行输入和快捷键发送
-- **停止控制**：AI生成过程中可随时点击停止按钮中断
-- **操作反馈**：点赞、点踩、复制等交互
-- **错误处理**：网络错误、API 限流等异常提示
-- **加载状态**：流式响应时的实时加载动画
-
-## 📱 移动端适配
-
-### 响应式断点
-- **桌面端**：≥ 768px，显示固定侧边栏
-- **移动端**：< 768px，侧边栏变为抽屉模式
-
-### 移动端优化
-- **触摸友好**：适合手指操作的按钮大小
-- **滑动操作**：支持手势打开/关闭侧边栏
-- **输入体验**：移动端键盘适配
-- **性能优化**：减少不必要的重渲染
-
-## 🛠️ 开发指南
-
-### 自定义主题
-修改 `src/assets/style.css` 中的 CSS 变量：
-
-```css
-:root {
-  --primary-color: #1677ff;
-  --sidebar-bg: #171717;
-  --message-bg: #f7f7f8;
-  /* 更多主题变量... */
-}
-```
-
-### 扩展 API 服务
-在 `src/services/dify.js` 中添加新的 API 方法：
-
-```javascript
-class DifyService {
-  async customMethod(params) {
-    // 自定义 API 调用
-  }
-}
-```
-
-### 添加新组件
-1. 在 `src/components/` 创建新组件
-2. 在 `src/views/Chat.vue` 中引入和使用
-3. 通过 props 和 events 进行数据传递
-
-### 状态管理扩展
-在 `src/stores/chat.js` 中添加新的状态和操作：
-
-```javascript
-export const useChatStore = defineStore('chat', () => {
-  const newState = ref(initialValue)
-  
-  const newAction = () => {
-    // 状态操作逻辑
-  }
-  
-  return { newState, newAction }
-})
-```
-
-## 🔧 配置选项
-
-### Vite 配置
-`vite.config.js` 支持的配置项：
-- **路径别名**：`@` 指向 `src` 目录
-- **开发端口**：默认 3000
-- **构建输出**：`dist` 目录
-
-### 环境变量
-支持的环境变量：
-- `VITE_DIFY_API_URL`：Dify API 地址
-- `VITE_DIFY_API_KEY`：API 密钥
-- `VITE_DIFY_APP_TOKEN`：应用令牌
-
-## 🚀 部署指南
-
-### 静态部署
-1. 构建生产版本：`npm run build`
-2. 将 `dist` 目录部署到静态服务器
-3. 配置服务器支持 SPA 路由
-
-### Docker 部署
-```dockerfile
-FROM node:16-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "run", "preview"]
-```
-
-### 环境配置
-- **开发环境**：使用 `.env.development`
-- **生产环境**：使用 `.env.production`
-- **服务器环境变量**：直接设置系统环境变量
-
-## 🔒 安全考虑
-
-### API 密钥安全
-- 使用环境变量存储敏感信息
-- 不要在客户端代码中硬编码 API 密钥
-- 考虑使用代理服务器隐藏真实 API 地址
-
-### 内容安全
-- Markdown 渲染已配置 XSS 防护
-- 用户输入经过适当的转义处理
-- 限制文件上传和外部链接访问
-
-## 🤝 贡献指南
-
-1. Fork 项目
-2. 创建功能分支：`git checkout -b feature/new-feature`
-3. 提交更改：`git commit -am 'Add new feature'`
-4. 推送分支：`git push origin feature/new-feature`
-5. 提交 Pull Request
-
-### 开发规范
-- 使用 ESLint 和 Prettier 格式化代码
-- 遵循 Vue 3 组合式 API 最佳实践
-- 编写清晰的提交信息
-- 添加必要的注释和文档
-
-
-## 🆘 常见问题
-
-### Q: 如何解决 CORS 跨域问题？
-A: 在 `vite.config.js` 中配置代理：
-```javascript
-export default defineConfig({
-  server: {
-    proxy: {
-      '/api': 'http://localhost:8000'
-    }
-  }
-})
-```
-
-### Q: 流式响应中断怎么办？
-A: 检查网络连接和 Dify API 状态，应用会自动重试失败的请求。
-
-### Q: 如何自定义 Markdown 渲染？
-A: 修改 `src/utils/helpers.js` 中的 `markdown-it` 配置：
-```javascript
-const md = new MarkdownIt({
-  // 自定义配置选项
-})
-```
-
-### Q: 移动端侧边栏不显示？
-A: 检查 CSS 媒体查询和 JavaScript 事件绑定，确保移动端适配正常工作。
-
-## 📞 技术支持
-
-如果你在使用过程中遇到问题：
-
-1. 查看本文档的常见问题部分
-2. 提供详细的错误信息和复现步骤
-
----
-
-**享受与 AI 的对话体验！** 🎉
+# Ecoful Chat Platform
+
+    生态化的一体化聊天与知识库系统，整合 Vue 3 前端、FastAPI 后端，以及基于百炼平台的检索增强问答能力，同时兼容 Dify 工作流聊 
+        天入口。
+
+    ## 功能亮点
+    - 统一聊天工作台：在一个界面内切换百炼 RAG 知识库与 Dify 智能体。
+    - 知识库管理：创建知识库、上传文档、自动分块、向量化与溯源展示。
+    - 实时流式问答：Server-Sent Events 逐字渲染，并即时写入对话历史。                                                         
+    - 多数据后端：PostgreSQL、Redis、MinIO、Chroma 协同提供结构化与向量存储。                                                 
+    - 部署灵活：可选本地开发、Docker Compose 或自定义服务器部署方案。                                                         
+                                                                                                                              
+    ## 系统架构概览                                                                                                           
+    - 前端 (Vite + Vue 3 + Ant Design Vue)                                                                                    
+      - `views/UnifiedChat.vue`：统一聊天入口，聚合 RAG 与 Dify                                                               
+      - `views/KnowledgeBase.vue`：知识库与文件管理                                                                           
+      - `providers/`：抽象 provider 层 (ragProvider, difyProvider)                                                            
+      - `services/`：REST/SSE 封装 (knowledgeBase.js, dify.js 等)                                                             
+    - 后端 (FastAPI + SQLAlchemy)                                                                                             
+      - `api/v1/endpoints/`：知识库、聊天、文件相关接口                                                                       
+      - `services/`：百炼客户端、向量库管理、文件处理                                                                         
+      - `models/`、`schemas/`：数据库 ORM 与 Pydantic 模型                                                                    
+    - 数据与 AI 依赖                                                                                                          
+      - PostgreSQL：结构化数据 (知识库、文件、会话)                                                                           
+      - Redis：缓存与任务辅助                                                                                                 
+      - MinIO：对象存储原始文件                                                                                               
+      - Chroma DB：文档向量库                                                                                                 
+      - 百炼平台：文本嵌入、问答模型                                                                                          
+      - Dify：可选对话代理服务                                                                                                
+                                                                                                                              
+    ## 代码结构                                                                                                               
+    ```                                                                                                                       
+    ├─ src/                                                                                                                   
+    │  ├─ components/        # 公共组件 (Sidebar、MainChat 等)                                                                
+    │  ├─ providers/         # Provider 适配层 (rag/dify)                                                                     
+    │  ├─ services/          # API 帮助类                                                                                     
+    │  ├─ stores/            # Pinia 状态                                                                                     
+    │  └─ views/             # 页面组件 (UnifiedChat、KnowledgeBase...)                                                       
+    ├─ backend/                                                                                                               
+    │  ├─ app/                                                                                                                
+    │  │  ├─ api/            # FastAPI 路由                                                                                   
+    │  │  ├─ core/           # 配置加载 (config.py)                                                                           
+    │  │  ├─ models/         # SQLAlchemy ORM                                                                                 
+    │  │  ├─ schemas/        # Pydantic 模型                                                                                  
+    │  │  └─ services/       # 向量、百炼、文件处理模块                                                                       
+    │  ├─ migrations/        # Alembic 迁移脚本                                                                               
+    │  ├─ Dockerfile                                                                                                          
+    │  └─ docker-compose.yml # 后端服务栈 (API + 依赖)                                                                        
+    ├─ docker-compose.yml    # 数据服务 (Postgres/Redis/MinIO/Chroma)                                                         
+    └─ README.md                                                                                                              
+    ```                                                                                                                       
+                                                                                                                              
+    ## 环境准备                                                                                                               
+    - Node.js >= 16                                                                                                           
+    - Python >= 3.11                                                                                                          
+    - PostgreSQL 15                                                                                                           
+    - Redis 7                                                                                                                 
+    - MinIO (或兼容 S3 对象存储)                                                                                              
+    - Chroma DB (HTTP 服务模式)                                                                                               
+    - 百炼平台 API Key (嵌入与问答)                                                                                           
+    - Dify API Key (可选)                                                                                                     
+                                                                                                                              
+    ## 配置环境变量                                                                                                           
+                                                                                                                              
+    ### 前端 `.env`                                                                                                           
+    ```                                                                                                                       
+    cp .env.example .env                                                                                                      
+    ```                                                                                                                       
+    示例键值：                                                                                                                
+    ```                                                                                                                       
+    VITE_API_BASE_URL=http://localhost:8080/api/v1                                                                            
+    VITE_DIFY_API_URL=https://your-dify-host/v1                                                                               
+    VITE_DIFY_API_KEY=your_dify_api_key                                                                                       
+    ```                                                                                                                       
+                                                                                                                              
+    ### 后端 `backend/.env`                                                                                                   
+    ```                                                                                                                       
+    cd backend                                                                                                                
+    cp .env.example .env                                                                                                      
+    ```                                                                                                                       
+    关键变量包括：                                                                                                            
+    - DATABASE_URL：PostgreSQL 连接串                                                                                         
+    - REDIS_URL：Redis 地址 (例如 `redis://localhost:6379/0`)                                                                 
+    - MINIO_ENDPOINT / ACCESS_KEY / SECRET_KEY / BUCKET_NAME                                                                  
+    - BAILIAN_API_KEY、BAILIAN_ENDPOINT、BAILIAN_EMBEDDING_MODEL、BAILIAN_CHAT_MODEL                                          
+    - CHROMA_HOST、CHROMA_PORT                                                                                                
+    - SECRET_KEY：生成 JWT 或签名所用密钥                                                                                     
+                                                                                                                              
+    > 建议将 `.env` 与 `backend/.env` 加入 `.gitignore`，保证密钥不被提交。                                                   
+                                                                                                                              
+    ## 后端启动流程                                                                                                           
+    ```                                                                                                                       
+    cd backend                                                                                                                
+    python -m venv venv                                                                                                       
+    source venv/bin/activate      # Windows: venv\Scripts\activate                                                            
+    pip install -r requirements.txt                                                                                           
+                                                                                                                              
+    # 可选：使用 Docker Compose 启动依赖服务                                                                                  
+    docker compose up -d          # backend/docker-compose.yml 或根目录 docker-compose.yml                                    
+                                                                                                                              
+    # 初始化数据库 (需已配置好 DATABASE_URL)                                                                                  
+    alembic upgrade head          # 或 python manage_db.py upgrade                                                            
+                                                                                                                              
+    # 启动 FastAPI (默认 8080)                                                                                                
+    uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload                                                                  
+                                                                                                                              
+    # 运行测试                                                                                                                
+    pytest backend/tests                                                                                                      
+    ```                                                                                                                       
+                                                                                                                              
+    ## 前端启动流程                                                                                                           
+    ```                                                                                                                       
+    npm install                                                                                                               
+    npm run dev        # http://localhost:3000                                                                                
+                                                                                                                              
+    # 生产构建与预览                                                                                                          
+    npm run build                                                                                                             
+    npm run preview                                                                                                           
+                                                                                                                              
+    # 质量工具                                                                                                                
+    npm run lint                                                                                                              
+    npm run format                                                                                                            
+    ```                                                                                                                       
+                                                                                                                              
+    ## 典型使用步骤                                                                                                           
+    1. 启动数据库、Redis、MinIO、Chroma 等依赖服务。                                                                          
+    2. 运行 FastAPI 后端，确保百炼和存储配置正确。                                                                            
+    3. 启动前端，访问 `http://localhost:3000`。                                                                               
+    4. 在知识库页面创建知识库，上传文档等待处理完成。                                                                         
+    5. 切换到统一聊天页：                                                                                                     
+       - 选择 RAG provider 并指定知识库 ID，即可针对文档提问（回答同时展示参考来源）。                                        
+       - 切换到 Dify provider，填写对应智能体信息后即可对话。                                                                 
+                                                                                                                              
+    ## 部署与运维建议                                                                                                         
+    - 生产环境建议将前端打包后的 `dist/` 部署到 Nginx 或静态托管服务，后端使用 Gunicorn/Uvicorn + Supervisor 或容器编排。     
+    - 若服务器已运行其他 Postgres/Redis/MinIO，请调整 `.env` 端口或直连既有服务，避免冲突。                                   
+    - 上传文件体积较大时，请配置 MinIO/对象存储生命周期与备份策略。                                                           
+    - 百炼与 Dify API Key 属敏感信息，推荐通过环境变量或密钥服务注入，不直接写入代码。                                        
+                                                                                                                              
+    ## 常用命令速查                                                                                                           
+    - `docker compose up -d`：启动根目录数据服务栈 (5432/6379/9000/8001)。                                                    
+    - `npm run lint -- --fix`：自动修复前端 lint 问题。                                                                       
+    - `pytest backend/tests -k test_chat`：运行聊天相关后端测试。                                                             
+    - `python manage_db.py`：查看数据库初始化、迁移等辅助命令。                                                               
+                                                                                                                              
+    ## 疑难排查                                                                                                               
+    - **首条对话未出现在历史中**：统一聊天入口已实现临时会话占位，若仍缺失，请检查后端 SSE 是否返回 `conversation_id`。       
+    - **百炼请求报错**：确认选择的模型与账号权限匹配，必要时在日志中查看具体响应。                                            
+    - **MinIO 预览失败**：确认 `MINIO_PUBLIC_ENDPOINT` 或使用 `KnowledgeBaseService.enrichSourcesWithUrls` 获得预签名链接。   
+    - **端口被占用**：编辑两个 `docker-compose.yml` 将宿主机端口改为不冲突的值，或直接连接已有服务。      
